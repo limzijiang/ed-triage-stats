@@ -32,14 +32,21 @@
   .tablecard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow-x:auto}
   table{border-collapse:collapse;width:100%;min-width:760px;font-size:.86rem}
   thead th{background:var(--accent2);color:#fff;font-weight:600;padding:11px 10px;text-align:center;
-           position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}
+           position:sticky;top:0;z-index:5;white-space:nowrap;cursor:pointer;user-select:none}
   thead th .arrow{font-size:.7rem;opacity:.6;margin-left:3px}
   thead th.sorted .arrow{opacity:1}
   tbody td{padding:9px 10px;border-top:1px solid var(--line);text-align:center;white-space:nowrap}
-  tbody td.name{text-align:left;white-space:normal;min-width:230px;font-weight:500}
+  tbody td.name{text-align:left;white-space:normal;min-width:210px;font-weight:500}
   tbody tr:hover{background:#faf6f5}
   tbody tr.taida{background:#fbf3ef}
   tbody tr.taida:hover{background:#f6e8e1}
+  /* 凍結機構名稱欄（第一欄） */
+  thead th:first-child{left:0;z-index:7;text-align:left}
+  tbody td.name{position:sticky;left:0;z-index:2;background:var(--card);
+                box-shadow:2px 0 5px -2px rgba(0,0,0,.13)}
+  tbody tr:hover td.name{background:#faf6f5}
+  tbody tr.taida td.name{background:#fbf3ef}
+  tbody tr.taida:hover td.name{background:#f6e8e1}
   .tag{display:inline-block;font-size:.68rem;padding:1px 7px;border-radius:10px;background:var(--chip);color:var(--accent);margin-left:6px;vertical-align:middle}
   .num{font-variant-numeric:tabular-nums}
   .bar{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-right:6px}
@@ -83,9 +90,9 @@
     <table id="tbl">
       <thead>
         <tr>
+          <th data-k="name">機構名稱</th>
           <th data-k="area">地區</th>
           <th data-k="special">特約類別</th>
-          <th data-k="name" style="text-align:left">機構名稱</th>
           <th data-k="total">急診總病人數</th>
           <th data-k="l1">檢傷一級<br>人數</th>
           <th data-k="l2">檢傷二級<br>人數</th>
@@ -152,9 +159,9 @@ function render(rows){
       lastReg=d.region;
     }
     html+='<tr class="'+(d.taida?'taida':'')+'">'+
+      '<td class="name">'+d.name+(d.taida?'<span class="tag">台大+其他v1</span>':'')+'</td>'+
       '<td>'+d.area+'</td>'+
       '<td>'+d.special+'</td>'+
-      '<td class="name">'+d.name+(d.taida?'<span class="tag">台大+其他v1</span>':'')+'</td>'+
       '<td class="num">'+fmtNum(d.total)+'</td>'+
       '<td class="num">'+fmtNum(d.l1)+'</td>'+
       '<td class="num">'+fmtNum(d.l2)+'</td>'+
