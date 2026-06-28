@@ -29,7 +29,11 @@
   .search input{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:.88rem;width:160px;outline:none}
   .search input:focus{border-color:var(--accent2)}
   .count{font-size:.8rem;color:var(--muted);margin:10px 2px}
-  .tablecard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow-x:auto}
+  .hint{display:none;align-items:center;gap:6px;font-size:.78rem;color:var(--accent2);font-weight:600;margin:0 2px 8px}
+  .hint.show{display:flex}
+  .hint .sw{display:inline-block;animation:sweep 1.1s ease-in-out infinite;font-size:.95rem}
+  @keyframes sweep{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+  .tablecard{background:var(--card);border-radius:12px;overflow:auto;max-height:76vh;box-shadow:0 1px 3px rgba(0,0,0,.06);-webkit-overflow-scrolling:touch}
   table{border-collapse:collapse;width:100%;min-width:760px;font-size:.86rem}
   thead th{background:var(--accent2);color:#fff;font-weight:600;padding:11px 10px;text-align:center;
            position:sticky;top:0;z-index:5;white-space:nowrap;cursor:pointer;user-select:none}
@@ -85,6 +89,7 @@
   </div>
 
   <div class="count" id="count"></div>
+  <div class="hint" id="hint">向右滑動查看更多欄位 <span class="sw">›››</span></div>
 
   <div class="tablecard">
     <table id="tbl">
@@ -118,7 +123,16 @@ let curFilter="all", curSort={k:"p12",dir:-1}, curQ="";
 
 const tbody=document.getElementById("tbody"),
       countEl=document.getElementById("count"),
-      qEl=document.getElementById("q");
+      qEl=document.getElementById("q"),
+      card=document.querySelector(".tablecard"),
+      hint=document.getElementById("hint");
+
+function updateHint(){
+  const more=card.scrollWidth-card.clientWidth-Math.ceil(card.scrollLeft);
+  hint.classList.toggle("show", card.scrollWidth>card.clientWidth+4 && more>4);
+}
+card.addEventListener("scroll",updateHint,{passive:true});
+window.addEventListener("resize",updateHint);
 
 function regOrder(r){return r==="臺北市"?0:r==="新北市"?1:2;}
 
@@ -171,6 +185,7 @@ function render(rows){
   }
   tbody.innerHTML=html||'<tr><td colspan="8" style="padding:30px;color:#bbb">查無資料</td></tr>';
   countEl.textContent="共 "+rows.length+" 家醫院";
+  card.scrollLeft=0; updateHint();
 }
 
 document.querySelectorAll("button.f").forEach(b=>{
